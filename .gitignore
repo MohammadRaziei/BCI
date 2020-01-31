@@ -1,0 +1,14 @@
+*.swp
+*.asv
+*.crdownload
+*.tmp
+~*
+
+*.rar
+*.zip
+*.mat
+*.info
+
+*.pdf
+*.docx
+*.pptx

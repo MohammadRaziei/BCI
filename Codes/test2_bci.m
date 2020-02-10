@@ -69,31 +69,47 @@ semilogy(w,abs(pdd),'k');
 %% Separating Tasks in Time Domain
 EEG_noTask = data_diff(1:floor(fs * timestamp_seconds(1) ),:);
 % timestamp_seconds2 = timestamp_seconds -  timestamp_seconds(1);
-EEG_listening = data_diff(timesInterval(timestamp_seconds(:,1), timestamp_seconds(:,2), fs),:);
-EEG_thinking = data_diff(timesInterval(timestamp_seconds(:,2), timestamp_seconds(:,3), fs),:);
-EEG_talking = data_diff(timesInterval(timestamp_seconds(:,3), timestamp_seconds(:,4), fs),:);
+[t0,t1] = timesInterval(timestamp_seconds(:,1), timestamp_seconds(:,2), fs, order_label-1);
+EEG_listening0 = data_diff(t0,:);
+EEG_listening1 = data_diff(t1,:);
+[t0,t1] = timesInterval(timestamp_seconds(:,2), timestamp_seconds(:,3), fs, order_label-1);
+EEG_thinking0 = data_diff(t0,:);
+EEG_thinking1 = data_diff(t1,:);
+[t0,t1] = timesInterval(timestamp_seconds(:,3), timestamp_seconds(:,4), fs, order_label-1);
+EEG_talking0 = data_diff(t0,:);
+EEG_talking1 = data_diff(t1,:);
+
 %% Ploting Separated Tasks in Time Domain
 figure;
-subplot(141); plot(EEG_noTask); title('Taskless EEG');
-subplot(142); plot(EEG_listening); title('Listening EEG');
-subplot(143); plot(EEG_thinking); title('Thinking EEG');
-subplot(144); plot(EEG_talking); title('Talking EEG');
+subplot(4,2,[1 2]); plot(EEG_noTask); title('Taskless EEG');
+subplot(423); plot(EEG_listening0); title('Listening EEG 0');
+subplot(425); plot(EEG_thinking); title('Thinking EEG 0');
+subplot(427); plot(EEG_talking0); title('Talking EEG 0');
 
+subplot(424); plot(EEG_listening1); title('Listening EEG 1');
+subplot(426); plot(EEG_thinking1); title('Thinking EEG 1');
+subplot(428); plot(EEG_talking1); title('Talking EEG 1');
 %% Separating Tasks in Freq Domain
 [P_EEG_noTask, W_EEG_noTask] = pwelch(EEG_noTask);
-[P_EEG_listening, W_EEG_listening] = pwelch(EEG_listening);
-[P_EEG_thinking, W_EEG_thinking] = pwelch(EEG_thinking);
-[P_EEG_talking, W_EEG_talking] = pwelch(EEG_talking);
+[P_EEG_listening0, W_EEG_listening0] = pwelch(EEG_listening0);
+[P_EEG_thinking0, W_EEG_thinking0] = pwelch(EEG_thinking0);
+[P_EEG_talking0, W_EEG_talking0] = pwelch(EEG_talking0);
+
+[P_EEG_listening1, W_EEG_listening1] = pwelch(EEG_listening1);
+[P_EEG_thinking1, W_EEG_thinking1] = pwelch(EEG_thinking1);
+[P_EEG_talking1, W_EEG_talking1] = pwelch(EEG_talking1);
 %% Ploting Separated Tasks in Freq Domain
 figure;
-subplot(141); semilogy(W_EEG_noTask / pi, P_EEG_noTask); title('Taskless EEG');
-subplot(142); semilogy(W_EEG_listening / pi, P_EEG_listening); title('Listening EEG');
-subplot(143); semilogy(W_EEG_thinking / pi, P_EEG_thinking); title('Thinking EEG');
-subplot(144); semilogy(W_EEG_talking / pi, P_EEG_talking); title('Talking EEG');
+subplot(2,4,[1,5]); semilogy(W_EEG_noTask / pi, P_EEG_noTask); title('Taskless EEG');
+subplot(242); semilogy(W_EEG_listening0 / pi, P_EEG_listening0); title('Listening EEG 0');
+subplot(243); semilogy(W_EEG_thinking0 / pi, P_EEG_thinking0); title('Thinking EEG 0');
+subplot(244); semilogy(W_EEG_talking0 / pi, P_EEG_talking0); title('Talking EEG 0');
+
+subplot(246); semilogy(W_EEG_listening1 / pi, P_EEG_listening1); title('Listening EEG 1');
+subplot(247); semilogy(W_EEG_thinking1 / pi, P_EEG_thinking1); title('Thinking EEG 1');
+subplot(248); semilogy(W_EEG_talking1 / pi, P_EEG_talking1); title('Talking EEG 1');
 % subplot(411);pwelch(EEG_noTask);
 % subplot(412);pwelch(EEG_listening);
 % subplot(413);pwelch(EEG_thinking);
 % subplot(414);pwelch(EEG_talking);
-
-
-
+%% 

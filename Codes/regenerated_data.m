@@ -7,6 +7,7 @@ load('Data_Memory_Subject3_Block3_timestamps.mat')
 %%play audio:
 % sound(vec2mat(SP_audioSignalMatrix,1),44100)
 fs = 500;
+data(:,[56, 57, 58, 59]) = [];
 data = data - mean(data,1);
 
 t = (0:length(data)-1)/fs;

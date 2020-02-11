@@ -154,7 +154,7 @@ channel2 = ceil(channel/(Nfit*1));
 % score_log = mdl.Fitted.Probability; % Probability estimates
 
 %%
-channels = unique(channel2(1:50,:));
+channels = unique(channel2(end-85:end,:));
 
 fitures = [myFeatureSelection(thinking,Nfit)];
 fitures = fitures(:,channels,:);

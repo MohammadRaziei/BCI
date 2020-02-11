@@ -1,7 +1,7 @@
 clear;clc;close all;
 load('regenerated_data2.mat')
 %%
-% listnq0=fft(EEG_listening_diff,'',3);
+% listnq0=fft(EEG_listening,'',1);
 % memor0=fft(EEG_thinking_diff,'',3);
 % %%
 % 
@@ -20,27 +20,44 @@ load('regenerated_data2.mat')
 % [coeff,score,latent] = pca([abs(memor0), angle(memor0)]);
 
 %%
-[P_noTask, W_noTask] = pwelch(EEG_noTask);
-[P_listening,W_listening] = pwelchTrial(EEG_listening);
-[P_thinking,W_thinking] = pwelchTrial(EEG_thinking);
-[P_talking,W_talking] = pwelchTrial(EEG_talking);
+% [P_noTask, W_noTask] = pwelch(EEG_noTask_diff);
+% [P_listening,W_listening] = pwelchTrial(EEG_listening_diff);
+% [P_thinking,W_thinking] = pwelchTrial(EEG_thinking_diff);
+% [P_talking,W_talking] = pwelchTrial(EEG_talking_diff);
+
+% [P_noTask, W_noTask] = pwelch(EEG_noTask);
+% [P_listening,W_listening] = pwelchTrial(EEG_listening);
+% [P_thinking,W_thinking] = pwelchTrial(EEG_thinking);
+% [P_talking,W_talking] = pwelchTrial(EEG_talking);
+
+P_noTask = fft(EEG_noTask,[],1); W_noTask = linspace(0,pi,size(P_noTask,1));
+P_listening = fft(EEG_listening,[],1);
+P_thinking = fft(EEG_thinking,[],1);
+P_talking = fft(EEG_talking,[],1);
 
 %%
 resamp = @(x,tx,a) resample(x,tx,a/(tx(2)-tx(1)),'linear',1,1); % 'linear', 'spline', 'pchip'
 
-[ref,~] = resamp(P_noTask,W_noTask,0.0157);
+listening = P_listening;
+thinking = P_thinking;
+talking = P_talking;
+
+% [ref,~] = resamp(P_noTask,W_noTask,0.0157);% 0.0157 ,0.01825
+[ref,~] = resamp(P_noTask,W_noTask,0.01825);% 0.0157 ,0.01825
 ref = smooth2D(ref);
 ref = repmat(ref,1,1,20);
-listening = P_listening ./ ref;
-thinking = P_thinking ./ ref;
-talking = P_talking ./ ref;
+listening = listening ./ ref;
+thinking = thinking ./ ref;
+talking = talking ./ ref;
 
-F_cutoff = 40;
+F_cutoff = 41;
+F_cuton = 4;
 Narr = size(P_listening,1);
 cutoff = floor(F_cutoff * 2 / fs * Narr);
-listening = listening(1:cutoff,:,:);
-thinking = thinking(1:cutoff,:,:);
-talking = talking(1:cutoff,:,:);
+cuton = ceil(F_cuton * 2 / fs * Narr);
+listening = listening(cuton:cutoff,:,:);
+thinking = thinking(cuton:cutoff,:,:);
+talking = talking(cuton:cutoff,:,:);
 
 % listening = log(abs(listening));
 % thinking = log(abs(thinking));
@@ -100,6 +117,7 @@ reshapeTrial = @(a) reshape(permute(a,[2,1,3]),size(a,1)*size(a,2),size(a,3))';
 
 Nfit = 5;
 fitures = [myFeatureSelection(thinking,Nfit)];%; myFeatureSelection(listening,Nfit); myFeatureSelection(talking,Nfit)];
+fitures = [(abs(fitures)); (angle(fitures))];
 fitures = reshapeTrial(fitures);
 
 %%

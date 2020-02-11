@@ -2,7 +2,7 @@ clear;clc;close all;
 load('regenerated_data.mat')
 
 
-[b,a] =  butter(5,[0.5*2/fs, 45*2/fs],'bandpass');
+[b,a] =  butter(5,[0.5*2/fs, 200*2/fs],'bandpass');
 data = filtfilt(b,a,data);
 
 

@@ -1,25 +1,6 @@
 clear;clc;close all;
 load('regenerated_data2.mat')
 %%
-% listnq0=fft(EEG_listening,'',1);
-% memor0=fft(EEG_thinking_diff,'',3);
-% %%
-% 
-% 
-% mainLobe = 4;
-% gaurd = 5;
-% 
-% filt = [-1/(2*gaurd)*ones(1,gaurd) 1/mainLobe*ones(1,mainLobe) -1/(2*gaurd)*ones(1,gaurd)];
-% 
-% freqz(filt,1)
-% 
-% 
-% plot((0:1000)/fs, filter(filt,1,listnq0(:,:,1)))
-%  
-%  
-% [coeff,score,latent] = pca([abs(memor0), angle(memor0)]);
-
-%%
 % [P_noTask, W_noTask] = pwelch(EEG_noTask_diff);
 % [P_listening,W_listening] = pwelchTrial(EEG_listening_diff);
 % [P_thinking,W_thinking] = pwelchTrial(EEG_thinking_diff);
@@ -59,66 +40,18 @@ listening = listening(cuton:cutoff,:,:);
 thinking = thinking(cuton:cutoff,:,:);
 talking = talking(cuton:cutoff,:,:);
 
-% listening = log(abs(listening));
-% thinking = log(abs(thinking));
-% talking = log(abs(talking));
-
 
 %%
 idx0 = find(order_label == 1);
 idx1 = find(order_label == 2);
-% fitures0 = [myFeatureSelection(thinking(:,:,idx0),8); myFeatureSelection(listening(:,:,idx0),8); myFeatureSelection(talking(:,:,idx0),8)];
-% fitures1 = [myFeatureSelection(thinking(:,:,idx1),8); myFeatureSelection(listening(:,:,idx1),8); myFeatureSelection(talking(:,:,idx1),8)];
 
-
-%%
-% chan1 = 1; chan2 = 5;
-
-% % onvecs2=zeros(135,135);
-% % for chan1=1:135
-% %     for chan2=1:135
-% %         train_X=[squeeze(fitures0(:,chan1,:)),squeeze(fitures1(:,chan2,:))]';
-% % %         X = log(abs(X));
-% %         mdl=fitcsvm(train_X,order_label);%,'Standardize',true);
-% % %         mdlSVM = fitPosterior(mdlSVM);
-% % %         [c,score_svm] = resubPredict(mdlSVM);
-% % %         [Xsvm,Ysvm,Tsvm,AUCsvm] = perfcurve(order_label,score_svm(:,mdlSVM.ClassNames),'true');
-% % 
-% %         onvecs2(chan1,chan2)=sum(mdl.IsSupportVector);
-% %     end
-% % end
-% % 
-% % min1=min(min(onvecs2))
-% % [i,j]=find(onvecs2==min1)
-
-% save onvecs2 onvecs2
-% i =
-%     51
-%     28
-%      1
-% 
-% 
-% j =
-%     34
-%     35
-%     89
-
-% log(abs(X))
-% i =
-% 
-%     27
-%     49
-% 
-% j =
-%     91
-%    101
 %%
 reshapeTrial = @(a) reshape(permute(a,[2,1,3]),size(a,1)*size(a,2),size(a,3))';
 
 Nfit = 5;
-fitures = [myFeatureSelection(thinking,Nfit)];%; myFeatureSelection(listening,Nfit); myFeatureSelection(talking,Nfit)];
+fitures0 = [myFeatureSelection(thinking,Nfit)];%; myFeatureSelection(listening,Nfit); myFeatureSelection(talking,Nfit)];
 % fitures = [(abs(fitures)); 15*(angle(fitures)-pi/2)];
-fitures = reshapeTrial(fitures);
+fitures = reshapeTrial(fitures0);
 
 %%
 pred = zeros(20,1);
@@ -138,27 +71,12 @@ sum(pred)/20
 B = mean(beta,2);
 [B,idx]=sort(abs(B));
 channel2 = ceil(channel/(Nfit*1));
-%%
-
-% chan1 = 51;chan2 = 34;
-% train_X=[squeeze(fitures0(:,chan1,:)),squeeze(fitures1(:,chan2,:))]';
-% %     
-% mdl=fitcsvm(train_X,order_label,'Standardize',true);
-% 
-% %         mdlSVM = fitPosterior(mdlSVM);
-% %         [c,score_svm] = resubPredict(mdl);
-% %         [Xsvm,Ysvm,Tsvm,AUCsvm] = perfcurve(order_label,score_svm(:,mdlSVM.ClassNames),'true');
-% sum(mdl.IsSupportVector);
-
-% mdl = fitglm(X./max(X),order_label, 'Distribution','binomial');
-% score_log = mdl.Fitted.Probability; % Probability estimates
 
 %%
 channels = unique(channel2(end-90:end,:));
 % channels = unique(channel2(1:100,:));
 %%
-fitures2 = [myFeatureSelection(thinking,Nfit)];
-fitures2 = fitures2(:,channels,:);
+fitures2 = fitures0(:,channels,:);
 fitures = [(abs(fitures2)); 15*(angle(fitures2))];
 fitures = reshapeTrial(fitures);
 %%

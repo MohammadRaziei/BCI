@@ -2,7 +2,8 @@ clear;clc;close all;
 load('regenerated_data.mat')
 
 
-[b,a] =  butter(5,[0.5*2/fs, 200*2/fs],'bandpass');
+% [b,a] =  butter(5,[0.5*2/fs, 100*2/fs],'bandpass');
+[b,a] =  butter(5,0.5*2/fs,'high');
 data = filtfilt(b,a,data);
 
 
@@ -41,6 +42,18 @@ for i = 1:NumTrial
     EEG_talking_diff(:,:,i) = data_diff(time_talking*fs : (time_talking + 2)*fs,:);   
 end
 
+channel_labels.O = 1:15;
+channel_labels.J = 16:25;
+channel_labels.E = 26:40;
+channel_labels.A = 41:55;
+channel_labels.B = 56:70;
+channel_labels.T = 71:78;
+channel_labels.D = 79:88;
+channel_labels.C = 89:100;
+channel_labels.F = 101:112;
+channel_labels.N = 113:120;
+channel_labels.L = 121:135;
+channel_labels.orders = 'OJEABTDCFNL';
 
 save('regenerated_data2.mat', ...
     'fs', 't', 't_diff', 'NumTrial', 'trial_samps', ...
@@ -48,4 +61,4 @@ save('regenerated_data2.mat', ...
     'EEG_listening', 'EEG_listening_diff', ...
     'EEG_thinking', 'EEG_thinking_diff', ...
     'EEG_talking', 'EEG_talking_diff', ...
-    'order_label', 'word_label', 'task_order', 'timestamp_seconds')
+    'order_label', 'word_label', 'task_order', 'timestamp_seconds', 'channel_labels')

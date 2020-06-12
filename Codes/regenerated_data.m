@@ -1,4 +1,5 @@
 clear;clc;close all;
+%%
 addpath('..\sEEG Data')
 load('Data_Memory_Subject3_Block3_sEEG.mat');
 load('Data_Memory_Subject3_Block3_parameters.mat');

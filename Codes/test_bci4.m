@@ -23,10 +23,10 @@ listening = P_listening;
 thinking = P_thinking;
 talking = P_talking;
 
-[ref,~] = resamp(P_noTask,W_noTask,0.0157);% 0.0157 ,0.01825
-% [ref,~] = resamp(P_noTask,W_noTask,0.01825);% 0.0157 ,0.01825
-ref = smooth2D(ref);
-ref = repmat(ref,1,1,20);
+[ref0,w_ref] = resamp(P_noTask,W_noTask,0.0157);% 0.0157 ,0.01825
+% [ref,W_noTask] = resamp(P_noTask,W_noTask,0.01825);% 0.0157 ,0.01825
+ref1 = smooth2D(ref0);
+ref = repmat(ref1,1,1,20);
 listening = listening ./ ref;
 thinking = thinking ./ ref;
 talking = talking ./ ref;
@@ -63,7 +63,7 @@ for i = 1:20
     [label,score] = predict(mdl,test_X);
     pred(i) = (label == test_Y);
     beta(:,i) = mdl.Beta;
-    [~,idx] = sort(mdl.Beta);
+    [~,idx] = sort(abs(mdl.Beta));
     channel(:,i) = idx;%ceil(idx/(Nfit*2));
 end
 
@@ -73,28 +73,28 @@ B = mean(beta,2);
 channel2 = ceil(channel/(Nfit*1));
 
 %%
-channels = unique(channel2(end-90:end,:));
-% channels = unique(channel2(1:100,:));
+channels = unique(channel2(end-8:end,:));
+% channels = unique(channel2(1:8,:));
 %%
 fitures2 = fitures0(:,channels,:);
 fitures = [(abs(fitures2)); 15*(angle(fitures2))];
 fitures = reshapeTrial(fitures);
 %%
 
-pred = zeros(20,1);
+pred2 = zeros(20,1);
 for i = 1:20
     train_X = fitures; train_Y = order_label;
     train_X(i,:) = []; train_Y(i,:) = [];
     test_X = fitures(i,:); test_Y = order_label(i,:);
     mdl=fitcsvm(train_X, train_Y,'Standardize',true);
     [label,score] = predict(mdl,test_X);
-    pred(i) = (label == test_Y);
+    pred2(i) = (label == test_Y);
     beta2(:,i) = mdl.Beta;
     [~,idx] = sort(mdl.Beta);
     channel3(:,i) = idx;%ceil(idx/(Nfit*2));
 end
 
-sum(pred)/20
+sum(pred2)/20
 B = mean(beta2,2);
 [B,idx]=sort(abs(B));
 channel4 = ceil(channel3/(Nfit*2));
